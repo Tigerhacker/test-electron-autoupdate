@@ -34,6 +34,10 @@
     <h1>Electron Auto Update Example</h1>
     <p id="version"></p>
 
+    <button onclick="checkForUpdates();">Check for updates</button>
+    <button onclick="openDevTools();">openDevTools</button>
+    <button onclick="ipcRenderer.send('nav_update');">nav_update</button>
+
     <div id="notification" class="hidden">
         <p id="message"></p>
         <button id="close-button" onClick="closeNotification()">
@@ -60,7 +64,7 @@
         const notification = document.getElementById('notification');
         const message = document.getElementById('message');
         const restartButton = document.getElementById('restart-button');
-        
+
         ipcRenderer.on('update_available', () => {
             ipcRenderer.removeAllListeners('update_available');
             message.innerText = 'A new update is available. Downloading now...';
@@ -80,6 +84,39 @@
         function restartApp() {
             ipcRenderer.send('restart_app');
         }
+
+
+        let update_alert = false;
+        function checkForUpdates(send_alert){
+            if(send_alert){
+                update_alert=true;
+            }
+            console.log("checkForUpdates");
+            ipcRenderer.send('app_checkUpdates');
+        }
+        ipcRenderer.on('update_none', (event, payload) => {
+            console.log("No udpate")
+            console.log(payload);
+            if (update_alert){
+                alert("Up to date\nLast update: "+payload.releaseDate)
+                update_alert = false
+            }
+        });
+
+        ipcRenderer.on('to_render_console', (event, arg) => {
+            // ipcRenderer.removeAllListeners('update_downloaded');
+            console.log(event, arg)
+        });
+
+
+        function openDevTools(){
+            ipcRenderer.send('open_developer_tools');
+        }
+
+        ipcRenderer.on('update_error', (event, payload) => {
+            console.log(payload);
+            alert("Error: "+JSON.stringify(payload))
+        });
     </script>
 </body>
 

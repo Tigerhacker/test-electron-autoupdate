@@ -1,6 +1,6 @@
 {
   "name": "test-electron-autoupdate",
-  "version": "1.0.0",
+  "version": "0.1.33",
   "description": "Testing out electron's auto update publishing",
   "main": "main.js",
   "scripts": {
